@@ -5,7 +5,7 @@ import sys
 import collections
 
 
-TMDB_ENDPOINT_PREFIX = 'api.themoviedb.org/3'  # 'movie/76341?api_key='
+TMDB_ENDPOINT_PREFIX = 'api.themoviedb.org'  # 'movie/76341?api_key='
 
 
 # Parses API key
@@ -16,7 +16,7 @@ def print_args():
     print(sys.argv)
     print('print_args: There are {} arguments'.format(len(sys.argv)))
 
-print_args()
+# print_args()
 
 
 def api_key():
@@ -26,18 +26,21 @@ def api_key():
         return 'no-api-key'
 
 connection = http.client.HTTPSConnection(TMDB_ENDPOINT_PREFIX, timeout=10)
-# connection.connect()
+connection.connect()
 
 
 # Retrieve movie static genre-id map at: https://developers.themoviedb.org/3/genres/get-movie-list
-def get_genre_ids():
-    url = '/genre/movie/list?' + '='.join(['api_key', api_key()])
-    print(url)
+def get_genre_ids(query_genres):
+    url = '/3/genre/movie/list?' + '='.join(['api_key', api_key()])
+    # print(url)
     connection.request('GET', url)
     response = connection.getresponse()
     print(response.status, response.reason)
     data = response.read()
     print(data)
+
+    # for genre_dict in data['genres']:
+    #     if grene_dict['name'] in
 
 # TODO: Make HTTP(S) Request and get Response
 # Official doc at: https://docs.python.org/3/library/http.client.html
