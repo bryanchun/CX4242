@@ -7,8 +7,9 @@ import collections
 
 class TMDb:
     def __init__(self):
-        self.TMDB_ENDPOINT_PREFIX = 'api.themoviedb.org'
-        self.connection = http.client.HTTPSConnection(self.TMDB_ENDPOINT_PREFIX, timeout=10)
+        self.TMDB_ENDPOINT = 'api.themoviedb.org'
+        self.csv_files = ['./Q1/movie_ID_name.csv', './Q1/movie_ID_sim_name.csv']
+        self.connection = http.client.HTTPSConnection(self.TMDB_ENDPOINT, timeout=10)
         self.connection.connect()
 
     """
@@ -29,6 +30,7 @@ class TMDb:
             return 'no-api-key'
 
     def request_get(self, url):
+        print(url)
         self.connection.request('GET', url)
         response = self.connection.getresponse()
         print(response.status, response.reason)
@@ -47,8 +49,7 @@ class TMDb:
         :param query_genres:
         :return: [{"id": id, "name": name}]
         """
-        url = '/3/genre/movie/list?' + 'api_key=' + self.api_key()
-        # print(url)
+        url = f'/3/genre/movie/list?api_key={self.api_key()}'
         return self.request_get(url)
 
     def get_genre_id(self, genre):
@@ -65,10 +66,12 @@ class TMDb:
         :param page_number: string of page number from '1' t0 '100'
         :return: json
         """
-        url = '/3/discover/movie?' + '&'.join(['api_key=' + self.api_key(), 'sort_by=popularity.desc',
-                                               'page=' + page_number,
+        api_key = self.api_key()
+        genre = self.get_genre_id('Drama')
+        url = '/3/discover/movie?' + '&'.join([f'api_key={self.api_key()}', 'sort_by=popularity.desc',
+                                               f'page={page_number}',
                                                'primary_release_date.gte=2014-01-01',
-                                               'with_genres=' + self.get_genre_id('Drama')])
+                                               f'with_genres={genre}'])
         return self.request_get(url)
 
         # json.JSONDecoder()
@@ -89,8 +92,6 @@ class TMDb:
         4. add to total count
         5. repeat if not enough
         '''
-        # time.sleep()
-        # 40 requests every 10 seconds, 1 seconds 4 requests, 0.25 seconds per request, safe measure: sleep 0.5 seconds
         page, total = 0, 350
         while total > 0:
             page += 1
@@ -98,21 +99,60 @@ class TMDb:
             # count how many movies needed
             # append to csv as needed
             # decrement total
+            # time.sleep()
+            # 40 requests every 10 seconds, 1 seconds 4 requests, 0.25 seconds per request, safe measure: sleep 0.5 seconds
 
-    def csv_write(self):
-        with open('./Q1/movie_ID_name.csv', 'w') as csv:    # to append, use mode 'a'
-            csv.write(','.join(['389868', 'Seoul Station']) + '\n')
-            csv.write(','.join(['495650', 'Erotiquest']) + '\n')
-            # csv.write('hello,csv')
+    def csv_write(self, file_flag):
+        """
+
+        :param file_flag: integer index for self.csv_files
+                with 0 for './Q1/movie_ID_name.csv' and 1 for './Q1/movie_ID_sim_name.csv'
+        :return:
+        """
+        with open(self.csv_files[file_flag], 'a') as csv:    # to append, use mode 'a'; to overwrite, use mode 'w'
+            if file_flag == 0:
+                csv.write(','.join(['389868', 'Seoul Station']) + '\n')
+                csv.write(','.join(['495650', 'Erotiquest']) + '\n')
+            elif file_flag == 1:
+                csv.write(','.join(['389868', '495650']) + '\n')
+            # else: do nothing
+
+
+    def csv_read(self, file_flag):
+        with open(self.csv_files[1], 'r') as csv:
+            pass
+        # generator pattern for retrieve_similar_movies
+        # vs whole data copy for deduplicate_similar_movies --- or maintain set collection
+
+    def csv_clear(self, file_flag):
+        with open(self.csv_files[file_flag], 'w') as csv:
+            csv.write('')
 
     """
     Q1.1: Part c
     """
-    def retrieve_similar_movie(self, movie_id):
+    def retrieve_similar_movies(self, movie_id):
+        """
+        Up to 5
+        :param movie_id: string of movie_id
+        :return:
+        """
+        url = f'/3/movie/{movie_id}/similar?api_key={self.api_key()}'
+        res = self.request_get(url)
+        print(res)
+        # 1. Count movies
+        # 2. Chop up to 5 movies
+
+    def deduplicate_similar_movies(self):
         pass
+        # collections.Set
 
 
 if __name__ == '__main__':
     tmdb = TMDb()
     print(tmdb.get_genre_id('Drama'))
+    # print(json.dumps(tmdb.get_genre_ids(), indent=4, sort_keys=True))
+    t = tmdb.collect_page_data('1')
+    print(type(t))
+    tmdb.retrieve_similar_movies('9741')
     tmdb.close()
