@@ -9,6 +9,7 @@ class TMDb:
     def __init__(self):
         self.TMDB_ENDPOINT = 'api.themoviedb.org'
         self.csv_files = ['./Q1/movie_ID_name.csv', './Q1/movie_ID_sim_name.csv']
+        self.GENRE = 'Drama'
         self.connection = http.client.HTTPSConnection(self.TMDB_ENDPOINT, timeout=10)
         self.connection.connect()
 
@@ -35,8 +36,9 @@ class TMDb:
         response = self.connection.getresponse()
         print(response.status, response.reason)
         data = response.read()
+        # print(data)
         _json = json.loads(data.decode('utf-8'))                # load as json dictionary
-        # _json = json.dumps(_json, indent=4, sort_keys=True)   # dump as formatted string
+        # print(json.dumps(_json, indent=4, sort_keys=True))   # dump as formatted string
         return _json
 
     """
@@ -63,25 +65,15 @@ class TMDb:
     def collect_page_data(self, page_number):
         """
 
-        :param page_number: string of page number from '1' t0 '100'
+        :param page_number: string of page number from '1' to '100'
         :return: json
         """
-        api_key = self.api_key()
-        genre = self.get_genre_id('Drama')
+        genre = self.get_genre_id(self.GENRE)
         url = '/3/discover/movie?' + '&'.join([f'api_key={self.api_key()}', 'sort_by=popularity.desc',
                                                f'page={page_number}',
                                                'primary_release_date.gte=2014-01-01',
                                                f'with_genres={genre}'])
         return self.request_get(url)
-
-        # json.JSONDecoder()
-
-        # bytedata = json.dumps(bytedata, ensure_ascii=False, encoding='utf-8')
-        # print(bytedata)
-        # print(bytedata[1428:1433])
-        # print(bytedata.decode('utf-8', errors='ignore'))
-        # _json = json.loads(bytedata.encode('utf-8').decode('unicode-escape'))  # load as json dictionary
-        # _json = json.loads(bytedata.decode('utf-8'))
 
     def aggregate_data(self):
         '''
@@ -92,31 +84,46 @@ class TMDb:
         4. add to total count
         5. repeat if not enough
         '''
+        file_flag = 0
+        self.csv_clear(file_flag)
+
         page, total = 0, 350
         while total > 0:
             page += 1
-            json = self.collect_page_data(str(page))
+            if page not in range(1, 101):
+                print(f'aggregate_data: page_number {page} is out of range')
+            _json = self.collect_page_data(str(page))
+            movies = _json['results']
+            id_name_pairs = list(map(lambda obj: (str(obj['id']), obj['title'].encode('utf-8')), movies))
+
+            surplus = total - len(movies)
+            added = len(movies) if surplus >= 0 else total
+
+            self.csv_append(id_name_pairs[:added], file_flag)
+            total -= added
+            time.sleep(0.5)
             # count how many movies needed
             # append to csv as needed
             # decrement total
             # time.sleep()
             # 40 requests every 10 seconds, 1 seconds 4 requests, 0.25 seconds per request, safe measure: sleep 0.5 seconds
+            # TODO BUG in csv.write(','.join([field1, field2]) + '\n'): "title": "Pok\u00e9mon the Movie: I Choose You!",
 
-    def csv_write(self, file_flag):
+    def csv_append(self, data, file_flag):
         """
 
         :param file_flag: integer index for self.csv_files
                 with 0 for './Q1/movie_ID_name.csv' and 1 for './Q1/movie_ID_sim_name.csv'
+        :param data: a list of string field pairs to be recorded as 2-tuples in csv
         :return:
         """
         with open(self.csv_files[file_flag], 'a') as csv:    # to append, use mode 'a'; to overwrite, use mode 'w'
             if file_flag == 0:
-                csv.write(','.join(['389868', 'Seoul Station']) + '\n')
-                csv.write(','.join(['495650', 'Erotiquest']) + '\n')
+                for (field1, field2) in data:
+                    csv.write(','.join([field1, field2]) + '\n')
             elif file_flag == 1:
                 csv.write(','.join(['389868', '495650']) + '\n')
-            # else: do nothing
-
+            # else: do nothing for invalid flags
 
     def csv_read(self, file_flag):
         with open(self.csv_files[1], 'r') as csv:
@@ -125,8 +132,7 @@ class TMDb:
         # vs whole data copy for deduplicate_similar_movies --- or maintain set collection
 
     def csv_clear(self, file_flag):
-        with open(self.csv_files[file_flag], 'w') as csv:
-            csv.write('')
+        open(self.csv_files[file_flag], 'w').close()
 
     """
     Q1.1: Part c
@@ -139,7 +145,7 @@ class TMDb:
         """
         url = f'/3/movie/{movie_id}/similar?api_key={self.api_key()}'
         res = self.request_get(url)
-        print(res)
+        # print(res)
         # 1. Count movies
         # 2. Chop up to 5 movies
 
@@ -150,9 +156,13 @@ class TMDb:
 
 if __name__ == '__main__':
     tmdb = TMDb()
-    print(tmdb.get_genre_id('Drama'))
+    # print(tmdb.get_genre_id('Drama'))
     # print(json.dumps(tmdb.get_genre_ids(), indent=4, sort_keys=True))
-    t = tmdb.collect_page_data('1')
-    print(type(t))
-    tmdb.retrieve_similar_movies('9741')
+    # t = tmdb.collect_page_data('1')
+    # print(type(t))
+    # print('has id', t['results'][0]['id'])
+    # print(len(t['results']))
+
+    tmdb.aggregate_data()
+    # tmdb.retrieve_similar_movies('9741')
     tmdb.close()
