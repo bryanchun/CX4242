@@ -13,7 +13,17 @@ DROP TABLE IF EXISTS movie_overview;
 
 -- [insert your SQL statement(s) BELOW this line]
 
+create table movies(
+    id integer,
+    name text,
+    score integer
+);
 
+create table movie_cast(
+    movie_id integer,
+    cast_id integer,
+    cast_name text
+);
 
 
 -- [insert your SQL statement(s) ABOVE this line]
@@ -28,8 +38,9 @@ DROP TABLE IF EXISTS movie_overview;
 
 -- [insert your SQLite command(s) BELOW this line]
 
-
-
+.import ./movie-name-score.txt movies
+.import ./movie-cast.txt movie_cast
+-- sqlite commands no semicolons
 
 -- [insert your SQLite command(s) ABOVE this line]
 
@@ -46,7 +57,9 @@ SELECT COUNT(*) FROM movie_cast;
 
 -- [insert your SQL statement(s) BELOW this line]
 
-
+create index scores_index on movies (score);
+create index cast_index on movie_cast (cast_id);
+create index movie_index on movies (id);
 
 
 -- [insert your SQL statement(s) ABOVE this line]
@@ -61,7 +74,7 @@ SELECT COUNT(*) FROM movie_cast;
 
 -- [insert your SQL statement(s) BELOW this line]
 
-
+select (count(*) * 100 /(select count(*) from movies)) as prop from movies where score > 50;
 
 
 -- [insert your SQL statement(s) ABOVE this line]
@@ -75,7 +88,9 @@ SELECT COUNT(*) FROM movie_cast;
 
 -- [insert your SQL statement(s) BELOW this line]
 
-
+select * from movies
+order by score desc
+limit 7;
 
 
 -- [insert your SQL statement(s) ABOVE this line]
@@ -89,7 +104,11 @@ SELECT COUNT(*) FROM movie_cast;
 
 -- [insert your SQL statement(s) BELOW this line]
 
-
+select cast_id, cast_name, (select count(*) from movie_cast m0 where m.cast_id = m0.cast_id) as movie_count
+from movie_cast m
+group by cast_id
+order by movie_count desc, cast_name asc
+limit 5;
 
 
 -- [insert your SQL statement(s) ABOVE this line]
@@ -103,7 +122,15 @@ SELECT COUNT(*) FROM movie_cast;
 
 -- [insert your SQL statement(s) BELOW this line]
 
+select c.cast_id, c.cast_name, (select avg(m.score) from movies m where m.id = c.movie_id) as average_score
+from movie_cast c
+where average_score >= 50
+group by c.cast_id
+having count(c.cast_id) > 2
+order by average_score desc, c.cast_name asc
+limit 5;
 
+-- TODO: average_score
 
 
 -- [insert your SQL statement(s) ABOVE this line]
@@ -117,8 +144,20 @@ SELECT COUNT(*) FROM movie_cast;
 
 -- [insert your SQL statement(s) BELOW this line]
 
+create view good_collaboration
+as
+select
+    mc1.cast_id as cast_member_id1,
+    mc2.cast_id as cast_member_id2,
+    (select count(m.id) from movies m where m.id = mc1.movie_id and m.id = mc2.movie_id) as movie_count,
+    (select avg(score) from movies m where m.id = mc1.movie_id and m.id = mc2.movie_id) as average_movie_score
+from (movie_cast mc1
+    inner join movie_cast mc2 on mc1.movie_id = mc2.movie_id and mc1.cast_id != mc2.cast_id)
+where movie_count >= 3 and average_movie_score >= 40;
 
+-- select * from good_collaboration;
 
+-- TODO: movie_count
 
 -- [insert your SQL statement(s) ABOVE this line]
 
