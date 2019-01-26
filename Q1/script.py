@@ -38,8 +38,12 @@ class TMDb:
         data = response.read()
         # print(data)
         _json = json.loads(data.decode('utf-8'))                # load as json dictionary
-        # print(json.dumps(_json, indent=4, sort_keys=True))   # dump as formatted string
+        # TODO OrderedDict Stably keeps json : json.loads(data, object_pairs_hook=collections.OrderDict)
+        # self.pretty_print_json(_json)   # dump as formatted string
         return _json
+
+    def pretty_print_json(self, _json):
+        print(json.dumps(_json, indent=4, sort_keys=True))  # dump as formatted string
 
     """
     Q1.1: Part a
@@ -94,7 +98,7 @@ class TMDb:
                 print(f'aggregate_data: page_number {page} is out of range')
             _json = self.collect_page_data(str(page))
             movies = _json['results']
-            id_name_pairs = list(map(lambda obj: (str(obj['id']), obj['title'].encode('utf-8')), movies))
+            id_name_pairs = list(map(lambda obj: (str(obj['id']), obj['title']), movies))
 
             surplus = total - len(movies)
             added = len(movies) if surplus >= 0 else total
@@ -108,6 +112,7 @@ class TMDb:
             # time.sleep()
             # 40 requests every 10 seconds, 1 seconds 4 requests, 0.25 seconds per request, safe measure: sleep 0.5 seconds
             # TODO BUG in csv.write(','.join([field1, field2]) + '\n'): "title": "Pok\u00e9mon the Movie: I Choose You!",
+            # TODO test boundary case around 350
 
     def csv_append(self, data, file_flag):
         """
@@ -118,16 +123,13 @@ class TMDb:
         :return:
         """
         with open(self.csv_files[file_flag], 'a') as csv:    # to append, use mode 'a'; to overwrite, use mode 'w'
-            if file_flag == 0:
-                for (field1, field2) in data:
-                    csv.write(','.join([field1, field2]) + '\n')
-            elif file_flag == 1:
-                csv.write(','.join(['389868', '495650']) + '\n')
-            # else: do nothing for invalid flags
+            for (field1, field2) in data:
+                csv.write(','.join([field1, field2]) + '\n')
 
     def csv_read(self, file_flag):
-        with open(self.csv_files[1], 'r') as csv:
-            pass
+        with open(self.csv_files[file_flag], 'r') as csv:
+            for line in csv:
+                yield line.split(',', 1)    # movie name could contain ,'s that do not serve as delimiters
         # generator pattern for retrieve_similar_movies
         # vs whole data copy for deduplicate_similar_movies --- or maintain set collection
 
@@ -144,14 +146,38 @@ class TMDb:
         :return:
         """
         url = f'/3/movie/{movie_id}/similar?api_key={self.api_key()}'
-        res = self.request_get(url)
-        # print(res)
-        # 1. Count movies
-        # 2. Chop up to 5 movies
+        return self.request_get(url)
+
+    def similar_movies(self, movie_id):
+        _json = self.retrieve_similar_movies(movie_id)
+        self.pretty_print_json(_json)
+        movies = _json['results']
+        similar_id_pairs = list(map(lambda obj: (movie_id, obj['id']), movies))
+
+        added = 5 if len(movies) > 5 else len(movies)
+        return similar_id_pairs[:added]
 
     def deduplicate_similar_movies(self):
-        pass
-        # collections.Set
+        read_file_flag = 0
+        write_file_flag = 1
+
+        # TODO collections.Set
+        similar_movies = list()
+        for movie_id, _ in self.csv_read(read_file_flag):
+            similar_movies.append(self.similar_movies(movie_id))
+        for id1, id2 in similar_movies:
+            for _id2, _id1 in similar_movies:
+                if id1 == _id1 and id2 == _id2:
+                    # remove one copy
+                    if id1 < id2:
+                        similar_movies.remove((_id2, _id1))
+                    elif _id2 < _id1:
+                        similar_movies.remove((id1, id2))
+                        similar_movies.remove((_id2, _id1))
+                        similar_movies.append((_id1, _id2))
+
+        self.csv_clear(write_file_flag)
+        self.csv_append(similar_movies, write_file_flag)
 
 
 if __name__ == '__main__':
@@ -162,7 +188,9 @@ if __name__ == '__main__':
     # print(type(t))
     # print('has id', t['results'][0]['id'])
     # print(len(t['results']))
+    # tmdb.retrieve_similar_movies('302156')
 
-    tmdb.aggregate_data()
-    # tmdb.retrieve_similar_movies('9741')
+    # tmdb.aggregate_data()
+    # tmdb.deduplicate_similar_movies()
     tmdb.close()
+    # TODO running time within 5 mins
