@@ -12,6 +12,7 @@ class TMDb:
         self.GENRE = 'Drama'
         self.connection = http.client.HTTPSConnection(self.TMDB_ENDPOINT, timeout=10)
         self.connection.connect()
+        self.GENRE_ID = self.get_genre_id(self.GENRE)
 
     """
     Utility functions
@@ -36,9 +37,8 @@ class TMDb:
         response = self.connection.getresponse()
         print(response.status, response.reason)
         data = response.read()
-        # print(data)
-        _json = json.loads(data.decode('utf-8'))                # load as json dictionary
-        # TODO OrderedDict Stably keeps json : json.loads(data, object_pairs_hook=collections.OrderDict)
+        print(data)
+        _json = json.loads(data, object_hook=collections.OrderedDict)        # load as json dictionary
         # self.pretty_print_json(_json)   # dump as formatted string
         return _json
 
@@ -72,11 +72,10 @@ class TMDb:
         :param page_number: string of page number from '1' to '100'
         :return: json
         """
-        genre = self.get_genre_id(self.GENRE)
         url = '/3/discover/movie?' + '&'.join([f'api_key={self.api_key()}', 'sort_by=popularity.desc',
                                                f'page={page_number}',
                                                'primary_release_date.gte=2014-01-01',
-                                               f'with_genres={genre}'])
+                                               f'with_genres={self.GENRE_ID}'])
         return self.request_get(url)
 
     def aggregate_data(self):
@@ -105,14 +104,9 @@ class TMDb:
 
             self.csv_append(id_name_pairs[:added], file_flag)
             total -= added
+            print(f'total: {total}')
             time.sleep(0.5)
-            # count how many movies needed
-            # append to csv as needed
-            # decrement total
-            # time.sleep()
             # 40 requests every 10 seconds, 1 seconds 4 requests, 0.25 seconds per request, safe measure: sleep 0.5 seconds
-            # TODO BUG in csv.write(','.join([field1, field2]) + '\n'): "title": "Pok\u00e9mon the Movie: I Choose You!",
-            # TODO test boundary case around 350
 
     def csv_append(self, data, file_flag):
         """
@@ -122,9 +116,11 @@ class TMDb:
         :param data: a list of string field pairs to be recorded as 2-tuples in csv
         :return:
         """
-        with open(self.csv_files[file_flag], 'a') as csv:    # to append, use mode 'a'; to overwrite, use mode 'w'
+        with open(self.csv_files[file_flag], 'a', encoding='utf-8') as csv: # to append, use mode 'a'; to overwrite, use mode 'w'
             for (field1, field2) in data:
                 csv.write(','.join([field1, field2]) + '\n')
+        # FIXED: https://pythonhosted.org/kitchen/unicode-frustrations.html
+        # Write files use flag encoding='utf-8': http://www.pitt.edu/~naraehan/python3/reading_writing_methods.html
 
     def csv_read(self, file_flag):
         with open(self.csv_files[file_flag], 'r') as csv:
@@ -190,7 +186,7 @@ if __name__ == '__main__':
     # print(len(t['results']))
     # tmdb.retrieve_similar_movies('302156')
 
-    # tmdb.aggregate_data()
+    tmdb.aggregate_data()
     # tmdb.deduplicate_similar_movies()
     tmdb.close()
     # TODO running time within 5 mins
