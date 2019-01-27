@@ -1,0 +1,1 @@
+Using the modularity statistic, nodes are coloured by detected communities of 35. The ForceAtlas 2 layout algorithm clustered same-colour nodes thus giving spatial meaning. Nodes with degree less than 3 is filtered and hidden. The number of edge-crossings are traded for compactness, since most nodes have more than 5 degrees.

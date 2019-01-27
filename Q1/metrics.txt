@@ -1,0 +1,8 @@
+Average Degree: 2.108
+Degree of a node consists of both in-degree and out-degree summed together. In-degree is the number of nodes that enters the given node, out-degree is the number of nodes the given node branch to. Their average shows an estimate of how connected the graph is.
+
+Network Diameter: 8
+Among the shortest distances (number of intermediate nodes) of all pairs of nodes, the network diameter is the longest shortest distance, showing a metric of the size of the graph.
+
+Average Path length: 2.092178770949720
+The average shortest distance over all nodes, showing the size of the graph.
