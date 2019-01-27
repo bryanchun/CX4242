@@ -60,7 +60,7 @@
                                 .range([2, 5])
                                 .clamp(true);
             var scale = d3.scale.linear()
-                                .domain(xRange)
+                                .domain([10, 250])
                                 .range([1, 5]);
             var rDist = (x, y) => Math.sqrt(x**2 + y**2);
             
@@ -85,8 +85,7 @@
                               .append("circle")
                               .attr("cx", d => xScale(d[0])) // cx not x, for x of center
                               .attr("cy", d => yScale(d[1])) // cy not y, for y of center
-                              // .attr("r", d => rDist(xScale(d[0]), yScale(d[1])))
-                              .attr("r", d => rScale(d[1]))
+                              .attr("r", d => rDist(scale(d[0]), scale(d[1])))
                               .attr("fill", "transparent")
                               .attr("stroke", "green")
                               .attr("stroke-width", 2);
@@ -119,14 +118,15 @@
             var cys = circlesArray.map(c => parseFloat(c.attributes.cy.value));
             var minUnscaledY = Math.max(...cys); // minUnscaledY is the bottommost, having the highest y-value 
             var minY = circlesArray.filter(d => d3.select(d).attr("cy") == minUnscaledY);
+            var minYValue = h - minUnscaledY - padding;
             d3.selectAll(minY)
-                .attr("stroke", "red");
-                  // .append("text")
-                  // .attr("x", d => d[0])
-                  // .attr("y", d => d[1])
-                  // .style("font-size", "16px")
-                  // .style("font-family", "sans-serif")
-                  // .text("MinY: ");
+                  .attr("stroke", "red");
+            svg.append("text")
+                  .attr("x", parseFloat(d3.selectAll(minY).attr("cx")))
+                  .attr("y", parseFloat(d3.selectAll(minY).attr("cy")))
+                  .style("font-size", "16px")
+                  .style("font-family", "sans-serif")
+                  .text("MinY: " + Math.round(minYValue));
             
             /***
              * Part f
