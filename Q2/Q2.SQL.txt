@@ -161,9 +161,7 @@ create view good_collaboration as
 
 select * from good_collaboration;
 
--- TODO: movie_count
 -- TODO: on copy, keep lower id1 pair
--- TODO: uncomment SELECT AVG(average_movie_score) FROM good_collaboration;
 
 -- [insert your SQL statement(s) ABOVE this line]
 
