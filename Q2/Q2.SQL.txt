@@ -122,16 +122,16 @@ limit 5;
 
 -- [insert your SQL statement(s) BELOW this line]
 
-select c.cast_id, c.cast_name, (select avg(m.score) from movies m where m.id = c.movie_id) as average_score
-from movie_cast c
-where average_score >= 50
-group by c.cast_id
-having count(c.cast_id) > 2
-order by average_score desc, c.cast_name asc
-limit 5;
-
--- TODO: average_score
-
+select cast_id, cast_name, avg(score) as average_score from (
+    -- subquery of (cast_id, cast_name, movie_id, score) of movies for each cast_id
+    select movie_cast.cast_id, movie_cast.cast_name, movie_cast.movie_id, movies.score
+        from movie_cast
+        inner join movies on movie_cast.movie_id = movies.id
+        )
+    group by cast_id
+    having count(cast_id) > 2 and avg(score) >= 50
+    order by avg(score) desc
+    limit 10;
 
 -- [insert your SQL statement(s) ABOVE this line]
 
@@ -144,20 +144,27 @@ limit 5;
 
 -- [insert your SQL statement(s) BELOW this line]
 
-create view good_collaboration
-as
-select
-    mc1.cast_id as cast_member_id1,
-    mc2.cast_id as cast_member_id2,
-    (select count(m.id) from movies m where m.id = mc1.movie_id and m.id = mc2.movie_id) as movie_count,
-    (select avg(score) from movies m where m.id = mc1.movie_id and m.id = mc2.movie_id) as average_movie_score
-from (movie_cast mc1
-    inner join movie_cast mc2 on mc1.movie_id = mc2.movie_id and mc1.cast_id != mc2.cast_id)
-where movie_count >= 3 and average_movie_score >= 40;
+create view good_collaboration as
+    select cast_member_id1, cast_member_id2, count(cast_member_id2) as movie_count, avg(score) as average_movie_score from (
+        -- subquery of (cast_member_id1, cast_member_id2, movie_id, score) of movies/scores that the casts share
+        select
+            mc1.cast_id as cast_member_id1,
+            mc2.cast_id as cast_member_id2,
+            m.id as movie_id,
+            m.score as score
+        from movie_cast mc1
+            inner join movie_cast mc2 on mc1.movie_id = mc2.movie_id and mc1.cast_id != mc2.cast_id
+            inner join movies m on m.id = mc1.movie_id and m.id = mc2.movie_id
+        )
+    group by cast_member_id1
+    having movie_count >= 3 and average_movie_score >= 40
+    ;
 
 -- select * from good_collaboration;
 
 -- TODO: movie_count
+-- TODO: on copy, keep lower id1 pair
+-- TODO: uncomment SELECT AVG(average_movie_score) FROM good_collaboration;
 
 -- [insert your SQL statement(s) ABOVE this line]
 
