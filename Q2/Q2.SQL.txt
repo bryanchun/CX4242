@@ -145,7 +145,7 @@ select cast_id, cast_name, avg(score) as average_score from (
 -- [insert your SQL statement(s) BELOW this line]
 
 create view good_collaboration as
-    select cast_member_id1, cast_member_id2, count(cast_member_id2) as movie_count, avg(score) as average_movie_score from (
+    select cast_member_id1, cast_member_id2, count(*) as movie_count, avg(score) as average_movie_score from (
         -- subquery of (cast_member_id1, cast_member_id2, movie_id, score) of movies/scores that the casts share
         select
             mc1.cast_id as cast_member_id1,
@@ -154,13 +154,12 @@ create view good_collaboration as
             m.score as score
         from movie_cast mc1
             inner join movie_cast mc2 on mc1.movie_id = mc2.movie_id and mc1.cast_id != mc2.cast_id
-            inner join movies m on m.id = mc1.movie_id and m.id = mc2.movie_id
-        )
-    group by cast_member_id1
-    having movie_count >= 3 and average_movie_score >= 40
-    ;
+            inner join movies m on m.id = mc1.movie_id --and m.id = mc2.movie_id
+    )
+    group by cast_member_id1, cast_member_id2
+    having movie_count >= 3 and average_movie_score >= 40;
 
---  select * from good_collaboration;
+select * from good_collaboration;
 
 -- TODO: movie_count
 -- TODO: on copy, keep lower id1 pair
