@@ -160,7 +160,7 @@ create view good_collaboration as
     having movie_count >= 3 and average_movie_score >= 40
     ;
 
--- select * from good_collaboration;
+--  select * from good_collaboration;
 
 -- TODO: movie_count
 -- TODO: on copy, keep lower id1 pair
