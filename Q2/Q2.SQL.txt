@@ -145,23 +145,35 @@ select cast_id, cast_name, avg(score) as average_score from (
 -- [insert your SQL statement(s) BELOW this line]
 
 create view good_collaboration as
-    select cast_member_id1, cast_member_id2, count(*) as movie_count, avg(score) as average_movie_score from (
-        -- subquery of (cast_member_id1, cast_member_id2, movie_id, score) of movies/scores that the casts share
-        select
-            mc1.cast_id as cast_member_id1,
-            mc2.cast_id as cast_member_id2,
-            m.id as movie_id,
-            m.score as score
-        from movie_cast mc1
-            inner join movie_cast mc2 on mc1.movie_id = mc2.movie_id and mc1.cast_id != mc2.cast_id
-            inner join movies m on m.id = mc1.movie_id --and m.id = mc2.movie_id
+    select min(id_a, id_b) as cast_member_id1, max(id_a, id_b) as cast_member_id2, movie_count, average_movie_score from (
+        -- subquery of (id_a, id_b, movie_count, average_movie_score) of all potentially id-pair-duplicated movies that id_a and id_b (no ordering) collaborated on with respective scores
+        select id_a, id_b, count(*) as movie_count, avg(score) as average_movie_score from (
+            -- subquery of (cast_member_id1, cast_member_id2, movie_id, score) of movies/scores that the casts share
+            select
+                mc1.cast_id as id_a,
+                mc2.cast_id as id_b,
+                m.id as movie_id,
+                m.score as score
+            from movie_cast mc1
+                inner join movie_cast mc2 on mc1.movie_id = mc2.movie_id and id_a != id_b
+                inner join movies m on m.id = mc1.movie_id -- and m.id = mc2.movie_id
+        )
+        group by id_a, id_b
+        having movie_count >= 3 and average_movie_score >= 40
     )
-    group by cast_member_id1, cast_member_id2
-    having movie_count >= 3 and average_movie_score >= 40;
+    group by min(id_a, id_b), max(id_a, id_b)
+    having count(*) > 1;
 
-select * from good_collaboration;
-
--- TODO: on copy, keep lower id1 pair
+-- Unique symmetric pairs
+/*
+--select count(*) from (
+    select min(gc.cast_member_id1, gc.cast_member_id2) as cast_member_id1, max(gc.cast_member_id1, gc.cast_member_id2) as cast_member_id2
+    from good_collaboration gc
+    group by min(gc.cast_member_id1, gc.cast_member_id2), max(gc.cast_member_id1, gc.cast_member_id2)
+    having count(*) > 1
+--)
+;*/
+-- 87/174 movies (have deduplicated id1' < id2' pairs or is originally unique), total number of id pairs
 
 -- [insert your SQL statement(s) ABOVE this line]
 
@@ -178,8 +190,15 @@ SELECT AVG(average_movie_score) FROM good_collaboration;
 
 -- [insert your SQL statement(s) BELOW this line]
 
+--select * from good_collaboration;
 
-
+select mc.cast_id as cast_id, mc.cast_name as cast_name, avg(gc.average_movie_score) as collaboration_score
+from
+    movie_cast mc
+    inner join good_collaboration gc on mc.cast_id = gc.cast_member_id1 or mc.cast_id = gc.cast_member_id2
+group by mc.cast_id
+order by collaboration_score desc, cast_name asc
+limit 5;
 
 -- [insert your SQL statement(s) ABOVE this line]
 
@@ -192,8 +211,15 @@ SELECT AVG(average_movie_score) FROM good_collaboration;
 
 -- [insert your SQL statement(s) BELOW this line]
 
+create virtual table movie_overview using fts3 (
+    id integer,
+    name text,
+    year integer,
+    overview text,
+    popularity decimal
+);
 
-
+.import ./movie-overview.txt movie_overview
 
 -- [insert your SQL statement(s) ABOVE this line]
 
@@ -203,7 +229,7 @@ SELECT AVG(average_movie_score) FROM good_collaboration;
 
 -- [insert your SQL statement(s) BELOW this line]
 
-
+select count(*) as count_overview from movie_overview where overview match 'fight';
 
 
 -- [insert your SQL statement(s) ABOVE this line]
@@ -217,7 +243,7 @@ SELECT AVG(average_movie_score) FROM good_collaboration;
 
 -- [insert your SQL statement(s) BELOW this line]
 
-
+select id from movie_overview where overview match 'love NEAR/5 story';
 
 
 -- [insert your SQL statement(s) ABOVE this line]
