@@ -1,0 +1,6 @@
+c.i.a: 47 rows return True.
+c.i.b: The operation Split into several columns created 4 new columns, a total of 5 category_name columns, with 2 of them removed (category_name 4 and 5) since not all rows have a value in those columns.
+c.ii: The keying function metaphone3 gives the highest number of clusters on the Key Collision method. 566 clusters were found.
+c.iii: `if(value == null, "Unbranded", value)` is the GREL.
+c.iv: `if(toNumber(value) > 100, 1, 0)` is the GREL.
+c.v.: `with(value.toLowercase(), v, or(v.contains("sale"), v.contains("offer"), v.contains("discount")))` is the GREL.

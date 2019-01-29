@@ -1,0 +1,1 @@
+Using the modularity statistic, nodes are coloured by detected communities of 35. The ForceAtlas 2 layout algorithm clustered same-colour nodes thus giving spatial meaning. The node are re-contracted then expanded as a circle-like structure with the Yifan Hu algorithm. Nodes with degree < 3 have their labels hidden for visual simplicity.

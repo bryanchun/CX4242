@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>hchun31</title>
+        <script type="text/javascript" src="d3/d3.v3.min.js"></script>
+        <style type="text/css">
+          div.bar {
+            display: inline-block;
+            width: 20px;
+            height: 75px;   /* We'll override this later */
+            background-color: teal;
+            margin-right: 2px;
+          }
+          .axis path,
+          .axis line {
+              fill: none;
+              stroke: black;
+              shape-rendering: crispEdges;
+          }
+
+          .axis text {
+              font-family: sans-serif;
+              font-size: 11px;
+          }
+
+        </style>
+    </head>
+    <body>
+        <script type="text/javascript">
+            var xRange = [10, 250];
+            var yRange = [10, 250];
+            var dataset = [...Array(100).keys()].map(function(i) {
+              return [ xRange[0] + Math.random() * (xRange[1] - xRange[0]),
+                       yRange[0] + Math.random() * (yRange[1] - yRange[0]) ];
+            });
+            var w = 500;
+            var h = 300;
+            var barPadding = 1;
+            var padding = 30;
+
+            var svg = d3.select("body").append("svg")
+                        .attr("width", w)
+                        .attr("height", h);
+
+            /***
+             * Part c
+             */
+            // Scales (generators)
+            var xScale = d3.scale.linear()
+                            .domain([0, d3.max(dataset, d => d[0])])
+                            .range([padding, w - padding * 2]);
+            var yScale = d3.scale.linear()
+                            .domain([0, d3.max(dataset, d => d[1])])
+                            .range([h - padding, padding]); // reverse downwards y-axis to upwards y-axis
+            var rScale = d3.scale.linear()
+                            .domain([10, 250])
+                            .range([1, 5]);
+            var rDist = (x, y) => Math.sqrt(x**2 + y**2);
+            
+            /***
+             * Part b
+             */
+            // Axes
+            var xAxis = d3.svg.axis()
+                            .scale(xScale)
+                            .orient("bottom");
+            var yAxis = d3.svg.axis()
+                            .scale(yScale)
+                            .orient("left");
+
+            /***
+             * Part a
+             */
+            // Scattered Plot
+            var circles = svg.selectAll("circle")
+                              .data(dataset)
+                              .enter()
+                              .append("circle")
+                              .attr("cx", d => xScale(d[0])) // cx not x, for x of center
+                              .attr("cy", d => yScale(d[1])) // cy not y, for y of center
+                              .attr("r", d => rDist(rScale(d[0]), rScale(d[1])))    // Use single scale to map each (X, Y) to [1, 5], use this immediate scale for circle radii
+                              .attr("fill", "transparent")
+                              .attr("stroke", "green")
+                              .attr("stroke-width", 2);
+
+            /***
+             * Part b, cont'
+             */
+            // Generate Axes
+            svg.append("g")
+                  .attr("class", "axis")  // Assign the ".axis" css class
+                  .attr("transform", "translate(0," + (h - padding) + ")")  // Transform axis to bottom
+                  .call(xAxis);           // takes `this` selection and hands it off to the function it takes (xAxis)
+            svg.append("g")
+                  .attr("class", "axis")  // Assign the ".axis" css class
+                  .attr("transform", "translate(" + padding + ", 0)")  // Transform axis to bottom
+                  .call(yAxis);           // takes `this` selection and hands it off to the function it takes (xAxis)
+
+            /***
+             * Part d
+             */
+            var circlesArray = circles[0];
+            var cxs = circlesArray.map(c => parseFloat(c.attributes.cx.value));
+            var averageCx = cxs.reduce((a, b) => a + b, 0) / cxs.length;
+            var aboveAverage = circlesArray.filter(d => d3.select(d).attr("cx") > averageCx);
+            d3.selectAll(aboveAverage)
+                  .attr("stroke", "blue");
+
+            /***
+             * Part e
+             */
+            var cys = circlesArray.map(c => parseFloat(c.attributes.cy.value));
+            var minUnscaledY = Math.max(...cys); // minUnscaledY is the bottommost, having the highest y-value 
+            var minY = circlesArray.filter(d => d3.select(d).attr("cy") == minUnscaledY);
+            var minYValue = h - minUnscaledY - padding;
+            d3.selectAll(minY)
+                  .attr("stroke", "red");
+            svg.append("text")
+                  .attr("x", parseFloat(d3.selectAll(minY).attr("cx")))
+                  .attr("y", parseFloat(d3.selectAll(minY).attr("cy")))
+                  .style("font-size", "16px")
+                  .style("font-family", "sans-serif")
+                  .text("MinY: " + Math.round(minYValue));
+            
+            /***
+             * Part f
+             */
+            // Title
+            svg.append("text")
+                  .attr("x", w / 2)
+                  .attr("y", padding / 2)   // appear above scatter plot
+                  .attr("text-anchor", "middle")
+                  .style("font-size", "16px")
+                  .style("font-family", "sans-serif")
+                  .text("hchun31");
+        </script>
+    </body>
+</html>  
