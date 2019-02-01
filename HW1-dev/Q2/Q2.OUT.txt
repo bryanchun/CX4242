@@ -6,7 +6,7 @@ movie_cast  movies
 cast_index    movie_index   scores_index
 ~~~~~
 prop
-52
+52.0
 ~~~~~
 id,name,score
 770824025,Breakout: Prisoner of War Escapes,100

@@ -10,6 +10,7 @@ class TMDb:
         self.TMDB_ENDPOINT = 'api.themoviedb.org'
         self.csv_files = ['./Q1/movie_ID_name.csv', './Q1/movie_ID_sim_movie_ID.csv']
         self.GENRE = 'Drama'
+        self.START_DATE = '2014-01-01'    # 2014
         self.connection = http.client.HTTPSConnection(self.TMDB_ENDPOINT, timeout=10)
         self.connection.connect()
         self.GENRE_ID = self.get_genre_id(self.GENRE)
@@ -75,7 +76,7 @@ class TMDb:
         """
         url = '/3/discover/movie?' + '&'.join([f'api_key={self.api_key()}', 'sort_by=popularity.desc',
                                                f'page={page_number}',
-                                               'primary_release_date.gte=2014-01-01',
+                                               f'primary_release_date.gte={self.START_DATE}',
                                                f'with_genres={self.GENRE_ID}'])
         return self.request_get(url)
 
@@ -98,7 +99,7 @@ class TMDb:
                 print(f'aggregate_data: page_number {page} is out of range')
             _json = self.collect_page_data(str(page))
             movies = _json['results']
-            id_name_pairs = list(map(lambda obj: (str(obj['id']), obj['title']), movies))
+            id_name_pairs = list(map(lambda obj: (str(obj['id']), obj['original_title']), movies))
 
             surplus = total - len(movies)
             added = len(movies) if surplus >= 0 else total

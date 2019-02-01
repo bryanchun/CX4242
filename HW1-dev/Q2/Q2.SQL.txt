@@ -74,7 +74,7 @@ create index movie_index on movies (id);
 
 -- [insert your SQL statement(s) BELOW this line]
 
-select (count(*) * 100 /(select count(*) from movies)) as prop from movies where score > 50;
+select cast(count(*) * 100 /(select count(*) from movies) as float) as prop from movies where score > 50;
 
 
 -- [insert your SQL statement(s) ABOVE this line]

@@ -1,0 +1,5 @@
+ignore
+Q1/*.gephi*
+Q2/Q2.OUT.SAMPLE.txt
+Q2/Q2.db
+Q2/Q2.OUT.txt
