@@ -1,0 +1,187 @@
+/**
+ * Data loading
+ * And Driver code
+ * takeaway: js function returning arrays is hard to understand
+ */
+
+var dataset1 = [],
+    dataset2 = [];
+
+d3.csv("movies.csv", movie => {
+  /**
+   * Figure title: Wins+Nominations vs. Rating
+   * X axis (horizontal) label: Rating
+   * Y axis (vertical) label: Wins+Noms
+   */
+  // console.log(movie.Rating);
+  dataset1.push([
+    parseFloat(movie.Rating),
+    parseInt(movie.WinsNoms),
+    parseInt(movie.IsGoodRating)
+  ]);
+  key1 = ['Rating', 'Wins+Norms'];
+  title1 = "Wins+Nominations vs. Rating";
+
+  /**
+   * Figure title: Budget vs. Rating
+   * X axis (horizontal) label: Rating
+   * Y axis (vertical) label: Budget
+   */
+  dataset2.push([
+    parseFloat(movie.Rating),
+    parseInt(movie.Budget),
+    parseInt(movie.IsGoodRating)
+  ]);
+  key2 = ['Rating', 'Budget'];
+  title2 = "Budget vs. Rating";
+
+}).then(function(data) {
+
+  generateScatterPlot(dataset1, key1, title1);
+  generateScatterPlot(dataset2, key2, title2);
+});
+
+
+/**
+ * Part a
+ * Creating scatter plots
+ * takeaway: debugging strategies
+ *           promises took me 2 hours to debug: empty array to populate
+ */
+var w = 1500, h = 700, padding = 100, offset = 60;
+
+// const generateScatterPlot = (dataset, keys, title) => {
+function generateScatterPlot(dataset, keys, title) {
+  var svg = d3.select("body")
+            .append("svg")
+            .attr("width", w)
+            .attr("height", h);
+
+  var xScale = d3.scaleLinear()
+            .domain([Math.floor(d3.min(dataset, d => d[0])), d3.max(dataset, d => d[0])])
+            .range([padding, w - padding * 2]);
+  var yScale = d3.scaleLinear()
+            .domain([0, d3.max(dataset, d => d[1])])
+            .range([h - padding, padding]); // reverse downwards y-axis to upwards y-axis
+
+  var xAxis = d3.axisBottom(xScale);
+  // x axis label
+  var xLabel = svg.append("text")             
+            .attr("transform", `translate(${w / 2}, ${h - offset})`)
+            .style("text-anchor", "middle")
+            .style("font-size", "16px")
+            .style("font-family", "sans-serif")
+            .text(keys[0]);
+  
+  var yAxis = d3.axisLeft(yScale);
+  // y axis label
+  var yLabel = svg.append("text")
+            .attr("transform", "rotate(-90)")
+            .attr("y", 0)
+            .attr("x", 40 - (h / 2))
+            .attr("dy", "1em")
+            .style("text-anchor", "middle")
+            .style("font-size", "16px")
+            .style("font-family", "sans-serif")
+            .text(keys[1]);
+
+  var badRatingPoints = svg.selectAll(".point")
+            .data(dataset.filter(d => d[2] == 0))
+            .enter()
+            .append("circle")
+            .attr("cx", d => xScale(d[0])) // cx not x, for x of center
+            .attr("cy", d => yScale(d[1])) // cy not y, for y of center
+            .attr("r", 5)
+            .attr("fill", "transparent")
+            .attr("stroke-width", 1)
+            .attr("class", "bad-rating");
+
+  var crossGenerator = d3.symbol()
+            .type(d3.symbolCross)
+            .size(80);
+  var goodRatingPoints = svg.selectAll(".point")
+            .data(dataset.filter(d => d[2] == 1))
+            .enter()
+            .append("path")
+            .attr("d", crossGenerator())
+            .attr("transform", d => `translate(${xScale(d[0])}, ${yScale(d[1])})`)
+            .attr("fill", "transparent")
+            .attr("stroke-width", 1)
+            .attr("class", "good-rating");
+
+  // make x axis
+  var xAxis = svg.append("g")
+            .attr("class", "axis")  // Assign the ".axis" css class
+            .attr("transform", `translate(0, ${h - padding})`)  // Transform axis to bottom
+            .call(xAxis);           // takes `this` selection and hands it off to the function it takes (xAxis)
+  // make y axis
+  var yAxis = svg.append("g")
+            .attr("class", "axis")  // Assign the ".axis" css class
+            .attr("transform", `translate(${padding}, 0)`)  // Transform axis to bottom
+            .call(yAxis);           // takes `this` selection and hands it off to the function it takes (yAxis)
+
+  var title = svg.append("text")
+            .attr("x", w / 2)
+            .attr("y", padding / 2)   // appear above scatter plot
+            .attr("text-anchor", "middle")
+            .style("font-size", "16px")
+            .style("font-family", "sans-serif")
+            .text(title);
+  
+  var legend = svg.append("g")
+            .attr("class", "legend")
+            .attr("transform", `translate(${w - padding}, ${padding})`);
+
+  legend.append("text")
+            .text("Bad Rating")
+            .attr("x", offset / 4)
+            .attr("y", 5);
+  legend.append("circle")
+            .attr("cx", 0) // cx not x, for x of center
+            .attr("cy", 0) // cy not y, for y of center
+            .attr("r", 5)
+            .attr("fill", "transparent")
+            .attr("stroke-width", 1)
+            .attr("class", "bad-rating");
+
+  legend.append("text")
+            .text("Good Rating")
+            .attr("x", offset / 4)
+            .attr("y", offset / 2);
+  legend.append("path")
+            .attr("d", crossGenerator())
+            .attr("transform", d => `translate(${0}, ${25})`)
+            .attr("fill", "transparent")
+            .attr("stroke-width", 1)
+            .attr("class", "good-rating");
+
+
+  //   function make_x_gridlines() {		
+  //     return d3.axisBottom(x)
+  //         .ticks(5)
+  // }
+  
+  // // gridlines in y axis function
+  // function make_y_gridlines() {		
+  //     return d3.axisLeft(y)
+  //         .ticks(5)
+  // }
+
+//   // add the X gridlines
+//   var xGrid = svg.append("g")			
+//     .attr("class", "grid")
+//     .attr("transform", `translate(0, ${h})`)
+//     .call(make_x_gridlines()
+//         .tickSize(-h)
+//         .tickFormat("")
+//     )
+
+// // add the Y gridlines
+// var yGrid = svg.append("g")			
+//   .attr("class", "grid")
+//   .call(make_y_gridlines()
+//       .tickSize(-w)
+//       .tickFormat("")
+//   )
+
+};

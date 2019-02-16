@@ -1,0 +1,3 @@
+a. The features Budget vs. Rating does a better job to separate the classes Bad Rating and Good Rating, because although overlapping is unavoidable, this scatterplot gives more space for non-overlapping Bad Rating points to spread over the left half than in Win+Nomination vs. Rating.
+
+c. 
