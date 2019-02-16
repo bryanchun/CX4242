@@ -11,6 +11,8 @@ major_categories = ['Humanities & Liberal Arts', 'Computers & Mathematics']
 df = df_raw[column_idx]
 df = df[df.Major_category.isin(major_categories)]
 df.Unemployment_rate = df.Unemployment_rate.map(lambda n: '{:.2%}'.format(n))
+df = df.sort_values(by=['Major_category', 'Major'])
+df.Major = df.Major.str.title()
 df
 
 #%%
@@ -75,6 +77,13 @@ table tr:nth-child(odd) td {
 table tr:first-child th {
   text-align: center;
 }
+table td {
+    text-align: right;
+}
+table td:first-child, table td:nth-child(2) {
+    text-align: left;
+}​
+
 </style>
 """
 
