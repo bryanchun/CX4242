@@ -1,3 +1,3 @@
 a. The features Budget vs. Rating does a better job to separate the classes Bad Rating and Good Rating, because although overlapping is unavoidable, this scatterplot gives more space for non-overlapping Bad Rating points to spread over the left half than in Win+Nomination vs. Rating.
 
-c. 
+c. We may want to use the square root scale when the larger the value grows the less effect it brings, like in radius of circles; the log scale when the values are of different order of magnitudes, e.g. 1e2, 1e3, 1e10.

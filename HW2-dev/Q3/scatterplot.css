@@ -10,10 +10,6 @@
   font-size: 11px;
 }
 
-.point {
-
-}
-
 .bad-rating {
   stroke: red;
 }
@@ -22,8 +18,10 @@
   stroke: blue;
 }
 
-.legend {
-
+.title {
+  font-family: sans-serif;
+  font-size: 20px;
+  font-weight: bold;
 }
 
 .grid line {
