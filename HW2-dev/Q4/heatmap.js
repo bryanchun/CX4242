@@ -2,7 +2,7 @@
 // http://bl.ocks.org/tjdecke/5558084
 // http://next.plnkr.co/edit/2v8YQoZSClhKpW2U1pwi?p=preview&utm_source=legacy&utm_medium=worker&utm_campaign=next&preview
 
-var margin = {top: 20, right: 90, bottom: 30, left: 90},
+var margin = {top: 20, right: 90, bottom: 30, left: 120},
     w = 600 - margin.left - margin.right,
     h = 500 - margin.top - margin.bottom;
 var itemWidth = 70,
@@ -10,7 +10,7 @@ var itemWidth = 70,
 var offset = 100;
 var numOfGraduations = 9;
 var legendItemWidth = 40,
-    legendItemHeight = 20;
+    legendItemHeight = 40;
 
 d3.csv("./heatmap.csv").then(function(response) {
 
@@ -28,26 +28,30 @@ d3.csv("./heatmap.csv").then(function(response) {
   var years = d3.set(data.map(d => d.year)).values();
   
   // Core elements
-  var container = d3.select("body")
-      .append("g")
-      .attr("width", w + margin.left + margin.right)
-      .attr("height", h);
-  container.append("text").text(heatmapTitle)
-      .classed("title", true)
-      .classed("blocky", true)
+  var frame = d3.select("body")
+      .append("div")
       .attr("width", w + margin.left + margin.right);
+  var header = frame
+      .append("g")
+      .classed("header", true)
+      // .style("width", w + margin.left + margin.right)
+      ;
+  header.append("text").text(heatmapTitle)
+      .classed("title", true)
+      .classed("blocky", true);
 
-  var dropdown = container
-      .attr("class", "select")
+  var dropdown = header
       .classed("blocky", true)
+      .append("g")
+      // .attr("class", "select")
       .append("text").text("Year:").classed("mono", true)
-      .append("select");
-  dropdown.selectAll("option")
+    .append("select")
+      .selectAll("option")
         .data(years)
       .enter().append("option")
         .text(d => d);
 
-  var svg = container
+  var svg = frame.append("g")
     .append("svg")
       .attr("width", w + margin.left + margin.right)
       .attr("height", h + margin.bottom + margin.top)
@@ -130,7 +134,7 @@ d3.csv("./heatmap.csv").then(function(response) {
     legendElement.append("text")
         .text(legendTitle)
         .attr("x", margin.left)
-        .attr("y", h - legendItemHeight)
+        .attr("y", h - legendItemHeight / 4)
         .attr("class", legend)
         .classed("mono", true);
 
@@ -170,4 +174,5 @@ d3.csv("./heatmap.csv").then(function(response) {
  * DONE Problem 1: d3.scheme is not gradient
  * DONE Problem 2: legend text not showing
  * DONE Problem 3: update cells data
+ * Problem 4: Center title and select -> forceable by css class only
  */

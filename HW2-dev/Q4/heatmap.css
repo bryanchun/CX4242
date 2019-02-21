@@ -5,7 +5,7 @@
   shape-rendering: crispEdges;
 }
 
-text.mono {
+text.mono, .axis {
   font-size: 9pt;
   font-family: Consolas, courier;
   fill: #aaa;
@@ -25,4 +25,10 @@ rect.bordered {
 
 .blocky {
   display: block;
+}
+
+.header {
+  padding: 20px;
+  text-align: center;
+  width: 600px;
 }
