@@ -20,6 +20,6 @@ Homework for the course Data and Visual Analytics of Georgia Institute of Techno
 
 Generate `HW#-{gtid}.zip` by running
 
-  ```zip HW#-{gtid}.zip HW#-submitted/```
+  ```zip -r HW#-{gtid}.zip HW#-submitted/```
 
-  ```zip HW1-hchun31.zip HW1-submitted/``` for example.
+  ```zip -r HW1-hchun31.zip HW1-submitted/``` for example.
