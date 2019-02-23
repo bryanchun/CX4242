@@ -340,7 +340,7 @@
       <column-instance column='[Grad_total]' derivation='Sum' name='[sum:Grad_total:qk]' pivot='key' type='quantitative' />
       <column-instance column='[Grad_unemployed]' derivation='Sum' name='[sum:Grad_unemployed:qk]' pivot='key' type='quantitative' />
       <column-instance column='[Number of Records]' derivation='Sum' name='[sum:Number of Records:qk]' pivot='key' type='quantitative' />
-      <layout dim-ordering='alphabetic' dim-percentage='0.277154' measure-ordering='alphabetic' measure-percentage='0.722846' show-structure='true' />
+      <layout dim-ordering='alphabetic' dim-percentage='0.473159' measure-ordering='alphabetic' measure-percentage='0.526841' show-structure='true' />
       <style>
         <style-rule element='mark'>
           <encoding attr='color' field='[:Measure Names]' type='palette'>

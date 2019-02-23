@@ -1,0 +1,37 @@
+path.link {
+  fill: none;
+  stroke: #666;
+  stroke-width: 1.5px;
+}
+
+.unpinned {
+  fill: #ccc;
+  stroke: #fff;
+  stroke: black;
+  stroke-width: 1.5px;
+}
+
+text {
+  fill: #000;
+  font: 10px sans-serif;
+  pointer-events: none;
+}
+
+.zero {
+  fill: none;
+  stroke: #080;
+  stroke-width: 3px;
+}
+
+.one {
+  fill: none;
+  stroke: #008;
+  stroke-width: 1.5px;
+}
+
+.pinned {
+  fill: #900;
+  stroke: #444;
+  stroke: black;
+  stroke-width: 3px;
+}

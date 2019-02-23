@@ -1,0 +1,32 @@
+body {
+  font: 14px Arial;
+  color: #929292;
+}
+
+.axis path,
+.axis line {
+  fill: none;
+  display: none;
+}
+
+.axis {
+  font-size: 13px;
+}
+
+rect.bar {
+  fill: #929292;
+}
+
+rect.highlighted {
+  fill: #00BFFF;
+}
+
+text.bar-count {
+  fill: #ffffff;
+}
+
+path.line {
+  fill: none;
+  stroke: steelblue;
+  stroke-width: 1.5;
+}

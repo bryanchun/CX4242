@@ -1,3 +1,5 @@
 ignore
-Q1/*.cwb
+Q1/*.twb
 Q1/*.py
+Q1/*.twbr
+Q5/dataset.txt
