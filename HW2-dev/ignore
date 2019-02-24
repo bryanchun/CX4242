@@ -1,4 +1,7 @@
 ignore
+http-server.py
+TODO.md
+__pycache__/
 Q1/*.twb
 Q1/*.py
 Q1/*.twbr
