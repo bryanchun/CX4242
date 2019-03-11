@@ -30,6 +30,7 @@ public class Q1 {
       extends Reducer<IntWritable, IntWritable, IntWritable, IntWritable> {
 
     private IntWritable result = new IntWritable();
+    private final static IntWritable one = new IntWritable(1);
 
     public void reduce(IntWritable key, Iterable<IntWritable> values, Context context)
         throws IOException, InterruptedException {

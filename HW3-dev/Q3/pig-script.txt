@@ -1,0 +1,17 @@
+-- Load provided data from S3
+trigrams = LOAD 's3://cse6242-2019spring-trigrams-big/*' AS (trigram:chararray, year:int, occurrences:int, books:int);
+
+-- Convert occurrences and books to floating point values for averaging
+trigrams_double = FOREACH trigrams GENERATE trigram, year, (double) occurrences, (double) books;
+
+filtered = FILTER trigrams_double BY occurrences >= 400 AND books >= 15;
+
+grouped = GROUP filtered BY trigram;
+
+averaged = FOREACH grouped GENERATE group AS trigram, SUM(filtered.occurrences)/SUM(filtered.books) AS avg_occurrences;
+
+sorted = ORDER averaged BY avg_occurrences DESC, trigram ASC;
+
+top = LIMIT sorted 20;
+
+STORE top INTO 's3://cse6242oan-2019spring-hchun31/output-big-2/' USING PigStorage('\t');

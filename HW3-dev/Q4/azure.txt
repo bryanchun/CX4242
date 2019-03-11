@@ -1,0 +1,7 @@
+password: q4-hw3-cx4242P
+
+primary key value:
+se7LCXJNJ8uXQFAa/t6NClsX+eirxcTW9+O4SL5gAlwy9D6/EFigmG64eMkOjKeIuPtNwqi7E0IXknYxDoISjg==
+
+container name:
+cx4242-hw3-q4-2019-03-11t00-56-37-307z
