@@ -9,11 +9,11 @@ Parameter, Value
 2_Relative Absolute Error,0.253181
 2_Relative Squared Error,0.067781
 2_Coefficient of Determination,0.932219
-3_Mean Absolute Error for 1st fold,1528.501585
-3_Mean Absolute Error for 2nd fold,1770.668061
-3_Mean Absolute Error for 3rd fold,2061.716008
-3_Mean Absolute Error for 4th fold,2285.486838
-3_Relative Squared Error for 1st fold,0.316946
-3_Relative Squared Error for 2nd fold,0.335732
-3_Relative Squared Error for 3rd fold,0.295413
-3_Relative Squared Error for 4th fold,0.350051
+3_Mean Absolute Error for 1st fold,1186.05648
+3_Mean Absolute Error for 2nd fold,1703.545693
+3_Mean Absolute Error for 3rd fold,1540.226393
+3_Mean Absolute Error for 4th fold,1366.784916
+3_Relative Squared Error for 1st fold,0.063119
+3_Relative Squared Error for 2nd fold,0.227008
+3_Relative Squared Error for 3rd fold,0.160647
+3_Relative Squared Error for 4th fold,0.158915
