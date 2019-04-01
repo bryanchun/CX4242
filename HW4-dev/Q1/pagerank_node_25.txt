@@ -1,0 +1,38 @@
+This homework only supports python versions 2.7, 3.5, 3.6 and 3.7 for testing warmup code and converting edge list
+Completed 1/25 iterations. 16.113368034362793 seconds elapsed.
+Completed 2/25 iterations. 28.643574953079224 seconds elapsed.
+Completed 3/25 iterations. 40.829556941986084 seconds elapsed.
+Completed 4/25 iterations. 53.356749057769775 seconds elapsed.
+Completed 5/25 iterations. 65.96234703063965 seconds elapsed.
+Completed 6/25 iterations. 77.98038697242737 seconds elapsed.
+Completed 7/25 iterations. 90.10416793823242 seconds elapsed.
+Completed 8/25 iterations. 101.9863429069519 seconds elapsed.
+Completed 9/25 iterations. 113.71835589408875 seconds elapsed.
+Completed 10/25 iterations. 129.18177103996277 seconds elapsed.
+Completed 11/25 iterations. 140.6138038635254 seconds elapsed.
+Completed 12/25 iterations. 151.97437691688538 seconds elapsed.
+Completed 13/25 iterations. 163.2908730506897 seconds elapsed.
+Completed 14/25 iterations. 174.32904291152954 seconds elapsed.
+Completed 15/25 iterations. 188.37474298477173 seconds elapsed.
+Completed 16/25 iterations. 204.7846610546112 seconds elapsed.
+Completed 17/25 iterations. 217.2409429550171 seconds elapsed.
+Completed 18/25 iterations. 229.71297693252563 seconds elapsed.
+Completed 19/25 iterations. 242.19229197502136 seconds elapsed.
+Completed 20/25 iterations. 254.3702199459076 seconds elapsed.
+Completed 21/25 iterations. 266.56603503227234 seconds elapsed.
+Completed 22/25 iterations. 278.55905985832214 seconds elapsed.
+Completed 23/25 iterations. 289.97107887268066 seconds elapsed.
+Completed 24/25 iterations. 301.44714188575745 seconds elapsed.
+Completed 25/25 iterations. 313.0137460231781 seconds elapsed.
+
+node_id	score
+8737	0.00013796553491600907
+2914	0.00012163066029258108
+18964	8.49696253682198e-05
+1220	7.358518945419149e-05
+2409	6.94965603658535e-05
+10029	6.760892294992412e-05
+214538	6.270473867109791e-05
+7343	5.928046574378898e-05
+39295	5.574341362821043e-05
+38283	5.562532798572862e-05

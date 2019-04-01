@@ -1,0 +1,19 @@
+This homework only supports python versions 2.7, 3.5, 3.6 and 3.7 for testing warmup code and converting edge list
+Completed 1/10 iterations. 0.0007660388946533203 seconds elapsed.
+Completed 2/10 iterations. 0.0008580684661865234 seconds elapsed.
+Completed 3/10 iterations. 0.000904083251953125 seconds elapsed.
+Completed 4/10 iterations. 0.0009419918060302734 seconds elapsed.
+Completed 5/10 iterations. 0.0009801387786865234 seconds elapsed.
+Completed 6/10 iterations. 0.0010161399841308594 seconds elapsed.
+Completed 7/10 iterations. 0.0010600090026855469 seconds elapsed.
+Completed 8/10 iterations. 0.0010941028594970703 seconds elapsed.
+Completed 9/10 iterations. 0.0011310577392578125 seconds elapsed.
+Completed 10/10 iterations. 0.0015881061553955078 seconds elapsed.
+
+node_id	score
+1	0.4106875
+2	0.2542078125
+0	0.1995421875
+5	0.06431250000000001
+4	0.04625000000000001
+3	0.025000000000000005
