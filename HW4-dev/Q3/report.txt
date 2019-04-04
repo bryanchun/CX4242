@@ -8,59 +8,59 @@
 **********************************************
 Q 3.1
 
-Linear Regression - Training Accuracy: 
-Linear Regression - Testing Accuracy: 
+Linear Regression - Training Accuracy: 0.64
+Linear Regression - Testing Accuracy: 0.64
 
-Random Forest - Training Accuracy: 
-Random Forest - Testing Accuracy: 
+Random Forest - Training Accuracy: 0.99
+Random Forest - Testing Accuracy: 0.89
 
-SVM - Training Accuracy: 
-SVM - Testing Accuracy: 
+SVM - Training Accuracy: 0.68
+SVM - Testing Accuracy: 0.68
 
 **********************************************
 
 Q 3.2 Hyperparameter Tuning
 
-Random Forest - n_estimators values tested (at least 3): 
-Random Forest - max_depth values tested (at least 3): 
+Random Forest - n_estimators values tested (at least 3): 1, 13, 25, 37, 50
+Random Forest - max_depth values tested (at least 3): 1, 4, 7, 10, 14
 
-Random Forest - Best combination of parameter values - n_estimators: 
-Random Forest - Best combination of parameter values - max_depth: 
+Random Forest - Best combination of parameter values - n_estimators: 50
+Random Forest - Best combination of parameter values - max_depth: 14
 
-Random Forest - Testing Accuracy before tuning (default parameters):
-Random Forest - Testing Accuracy after tuning:
+Random Forest - Testing Accuracy before tuning (default parameters): 0.89
+Random Forest - Testing Accuracy after tuning: 0.90
 
-SVM - Kernel Values tested: 
-SVM - C values tested (at Least 3): 
-SVM - Best combination of parameter values - Kernel: 
-SVM - Best combination of parameter values - C: 
+SVM - Kernel Values tested: 'rbf', 'linear'
+SVM - C values tested (at Least 3): 0.01, 1.0, 100.0
+SVM - Best combination of parameter values - Kernel: 'rbf'
+SVM - Best combination of parameter values - C: 100.0
 
 *********************************************
 
 Q 3.3
 
-SVM - Highest mean testing/cross-validated accuracy (best score): 
-SVM - Mean train score: 
-SVM Mean fit time: 
+SVM - Highest mean testing/cross-validated accuracy (best score): 0.79
+SVM - Mean train score: 0.80
+SVM Mean fit time: 2.87
 
 *********************************************
 
 Q 3.4 Feature Importance - WITH THE MODEL TRAINED IN Q 3.1
 
-Random Forest  - Most important feature (e.g. X5): 
-Random Forest  - Least important feature (e.g. X1): 
+Random Forest  - Most important feature (e.g. X5): X8
+Random Forest  - Least important feature (e.g. X1): X5
 
 *********************************************
 
 Q 3.5
 
-Best Classifier and why (in at most 50 words): 
+Best Classifier and why (in at most 50 words): The test accuracies of Linear Regression, Random Forest Classifier, SVM Classifier are respectively: 0.64, 0.90, 0.80; with respective fit time 0.01, 0.77, 5.78. Obviously Random Forest Classifier is the best classifier, with the highest test accuracy and reasonably fast fitting.
 
 *********************************************
 
 Q 3.6 Principal Component Analysis
 
-"PCA - Percentage of variance explained by each of the selected components (enter the entire array as [0.12, …, 0.012])": 
-"PCA - Singular values corresponding to each of the selected components (enter the entire array as [0.09, …, 0.037])": 
+"PCA - Percentage of variance explained by each of the selected components (enter the entire array as [0.12, …, 0.012])": [5.05244699e-01, 3.76936308e-01, 1.17729459e-01, 4.59941146e-05, 1.92789195e-05, 1.12325971e-05, 6.78650046e-06, 1.88972802e-06, 1.54090217e-06, 8.24290182e-07]
+"PCA - Singular values corresponding to each of the selected components (enter the entire array as [0.09, …, 0.037])": [886690.55021531, 765870.22149032, 428019.71358878, 8460.03829652, 5477.24973374, 4180.81824816, 3249.7064993, 1714.82911585, 1548.49116353, 1132.56010893]
 
 *********************************************
