@@ -54,6 +54,10 @@ class RandomForest(object):
 
         samples = [] # sampled dataset
         labels = []  # class labels for the sampled records
+        XX = np.array(XX)
+        bootstrapping_mask = np.random.choice(len(XX), n, replace=True)     # Note: Bootstraping on full dataset size results in swapping out some records in favour of duplicates
+        samples = XX[bootstrapping_mask, :-1]
+        labels = XX[bootstrapping_mask, -1]
         return (samples, labels)
 
 
@@ -68,7 +72,8 @@ class RandomForest(object):
     def fitting(self):
         # TODO: Train `num_trees` decision trees using the bootstraps datasets
         # and labels by calling the learn function from your DecisionTree class.
-        pass      
+        for decision_tree, data_sample, data_label in zip(self.decision_trees, self.bootstraps_datasets, self.bootstraps_labels):
+            decision_tree.learn(data_sample, data_label)
 
 
     def voting(self, X):
@@ -79,11 +84,12 @@ class RandomForest(object):
             #   1. Find the set of trees that consider the record as an 
             #      out-of-bag sample.
             #   2. Predict the label using each of the above found trees.
-            #   3. Use majority vote to find the final label for this recod.
+            #   3. Use majority vote to find the final label for this record.
             votes = []
             for i in range(len(self.bootstraps_datasets)):
                 dataset = self.bootstraps_datasets[i]
                 if record not in dataset:
+                    print("Record considered OOB sample")
                     OOB_tree = self.decision_trees[i]
                     effective_vote = OOB_tree.classify(record)
                     votes.append(effective_vote)
@@ -95,7 +101,7 @@ class RandomForest(object):
                 # TODO: Special case 
                 #  Handle the case where the record is not an out-of-bag sample
                 #  for any of the trees. 
-                pass
+                y = np.append(y, self.decision_trees[0].classify(record))
             else:
                 y = np.append(y, np.argmax(counts))
 
@@ -144,7 +150,7 @@ def main():
 
     # Comparing predicted and true labels
     results = [prediction == truth for prediction, truth in zip(y_predicted, y)]
-
+    
     # Accuracy
     accuracy = float(results.count(True)) / float(len(results))
 

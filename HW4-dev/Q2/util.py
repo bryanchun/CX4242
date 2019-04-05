@@ -11,8 +11,10 @@ def entropy(class_y):
     #
     # Example:
     #    entropy([0,0,0,1,1,1,1,1,1]) = 0.92
-        
-    entropy = 0
+
+    unique, counts = np.unique(class_y, return_counts=True)
+    probs = np.array(counts)/len(class_y)
+    entropy = np.sum(-probs * np.log2(probs))
     return entropy
 
 
@@ -75,12 +77,24 @@ def partition_classes(X, y, split_attribute, split_val):
                [4, 'cc', 32]]                           1]
                
     ''' 
-    
+
     X_left = []
     X_right = []
     
     y_left = []
     y_right = []
+
+    X, y = np.array(X), np.array(y)
+    if isinstance(split_attribute, int):
+        left_idx = X[:, split_attribute].astype(np.int32) <= split_val
+        right_idx = X[:, split_attribute].astype(np.int32) > split_val
+    elif isinstance(split_attribute, str):
+        left_idx = X[:, split_attribute] == split_val
+        right_idx = X[:, split_attribute] != split_val
+    # else: split_attribute has invalid type
+
+    X_left, X_right = X[left_idx], X[right_idx]
+    y_left, y_right = y[left_idx], y[right_idx]
     
     return (X_left, X_right, y_left, y_right)
 
@@ -105,7 +119,12 @@ def information_gain(previous_y, current_y):
     info_gain = 0.45915
     """
 
-    info_gain = 0
+    current_y = np.array(current_y)
+    lengthes = np.array([ len(sublist) for sublist in current_y ])
+    flattened_count = np.sum([ 1 for sublist in current_y for i in sublist ])
+    probs = lengthes/flattened_count
+
+    info_gain = entropy(previous_y) - np.sum([ p * entropy(branch) for p, branch in zip(probs, current_y)])
 
     return info_gain
     
