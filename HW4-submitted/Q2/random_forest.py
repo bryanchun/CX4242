@@ -92,7 +92,7 @@ class RandomForest(object):
             for i in range(len(self.bootstraps_datasets)):
                 dataset = self.bootstraps_datasets[i]
                 if record not in dataset:
-                    print("Record considered OOB sample")
+                    # print("Record considered OOB sample")
                     OOB_tree = self.decision_trees[i]
                     effective_vote = OOB_tree.classify(record)
                     votes.append(effective_vote)
