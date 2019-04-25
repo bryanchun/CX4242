@@ -144,7 +144,7 @@ def main():
     # Creating the bootstrapping datasets
     print("creating the bootstrap datasets")
     randomForest.bootstrapping(XX)
-
+    
     # Building trees in the forest
     print("fitting the forest")
     randomForest.fitting()
